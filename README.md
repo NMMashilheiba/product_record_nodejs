@@ -16,10 +16,18 @@ I have deployed this app on heroku so you can check it out here, https://sellsre
 '/product/todaysrevenue'
 ## create record 
 '/product/create/record'
+
 example for create record:
+
 {
+
   "name": "ProductName",
+  
   "quantity": 2,
+  
   "amount": 250,
+  
   "dateTime": "2022-08-12"
+  
 }
+
