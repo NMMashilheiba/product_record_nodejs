@@ -29,7 +29,12 @@ var dateTime = date;
 const server = http.createServer(async (req, res) => {
   // route #0 Root
   if (req.url === "/" && req.method === "GET") {
-    res.end({ message: "Welcome to Mashilheiba productRecordAPi with nodejs" });
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        message: "Welcome to Mashil product sells record api with nodejs ",
+      })
+    );
   }
   // route #1 GET TOP FIVE SELLING RECORDS
   else if (req.url === "/product/topproducts" && req.method === "GET") {
