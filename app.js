@@ -46,11 +46,14 @@ const server = http.createServer(async (req, res) => {
   // route #2 GET ALL RECORDS
   else if (req.url === "/product/allproducts" && req.method === "GET") {
     const todos = await listAll(client);
-    res.writeHead(200, { "Content-Type": "application/json" });
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
     res.end(JSON.stringify(todos));
   }
 
-  // route #3 CREATE RECORD
+  // route #3 CREATE RECORD POST
   else if (req.url === "/product/create/record" && req.method === "POST") {
     let userData = await getReqData(req);
     let data = JSON.parse(userData);
