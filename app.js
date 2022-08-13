@@ -27,8 +27,12 @@ var dateTime = date;
 
 // API routes
 const server = http.createServer(async (req, res) => {
+  // route #0 Root
+  if (req.url === "/" && req.method === "GET") {
+    res.end({ message: "Welcome to Mashilheiba productRecordAPi with nodejs" });
+  }
   // route #1 GET TOP FIVE SELLING RECORDS
-  if (req.url === "/product/topproducts" && req.method === "GET") {
+  else if (req.url === "/product/topproducts" && req.method === "GET") {
     const todos = await findTopFiveProduct(client);
 
     res.writeHead(200, { "Content-Type": "application/json" });
