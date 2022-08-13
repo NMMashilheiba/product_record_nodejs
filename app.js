@@ -1,66 +1,60 @@
 const http = require("http");
 const { MongoClient } = require("mongodb");
 const PORT = process.env.PORT || 5000;
+const {
+  findTopFiveProduct,
+  listAll,
+  todaysRevenue,
+  createRecord,
+} = require("./controller");
+const { getReqData } = require("./utils");
 
 const uri =
   "mongodb+srv://mashil:Mashil123@nodeapi.a1u6ibd.mongodb.net/nodeapi?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
-
-client.connect();
-
-async function createRecord(client, newRecord) {
-  const result = await client
-    .db("nodeapi")
-    .collection("productSalesRecord")
-    .insertOne(newRecord);
-
-  console.log(`New record created with id ${result.insertedId}`);
+try {
+  client.connect();
+} catch (error) {
+  console.log(error);
 }
 
-async function findTopFiveProduct(client) {
-  var res = [];
-  const pipeline = [
-    {
-      $group: {
-        _id: "$name",
-        quantity: {
-          $sum: "$quantity",
-        },
-      },
-    },
-    {
-      $sort: {
-        quantity: -1,
-      },
-    },
-    {
-      $limit: 5,
-    },
-  ];
+var today = new Date();
+var date =
+  today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+// var time =
+//   today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+var dateTime = date;
 
-  const aggCursor = await client
-    .db("nodeapi")
-    .collection("productSalesRecord")
-    .aggregate(pipeline);
-
-  console.log("Top selling products are:");
-  await aggCursor.forEach((topSellingProduct) => {
-    // console.log(`${topSellingProduct._id}`);
-    res.push(topSellingProduct._id);
-    // console.log(res);
-  });
-  return res;
-}
-
+// API routes
 const server = http.createServer(async (req, res) => {
-  if (req.url === "/api/topproducts" && req.method === "GET") {
-    // get the topSellingProducts.
+  // route #1 GET TOP FIVE SELLING RECORDS
+  if (req.url === "/product/topproducts" && req.method === "GET") {
     const todos = await findTopFiveProduct(client);
-    // set the status code, and content-type
+
     res.writeHead(200, { "Content-Type": "application/json" });
-    // send the data
     res.end(JSON.stringify(todos));
-    console.log("Done");
+  }
+  // route #2 GET ALL RECORDS
+  else if (req.url === "/product/allproducts" && req.method === "GET") {
+    const todos = await listAll(client);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(todos));
+  }
+
+  // route #3 CREATE RECORD
+  else if (req.url === "/product/create/record" && req.method === "POST") {
+    let userData = await getReqData(req);
+    let data = JSON.parse(userData);
+    // console.log(JSON.parse(userData));
+    const result = await createRecord(client, data);
+    res.writeHead(201, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(result));
+  }
+  // route #4
+  else if (req.url === "/product/todaysrevenue" && req.method === "GET") {
+    const todos = await todaysRevenue(client, { maxNoOfResults: 5 });
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(todos));
   }
 
   // No route present
