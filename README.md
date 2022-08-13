@@ -1,7 +1,7 @@
 
 # product_record_nodejs
 
-nodeJs api for storing product sells record to mongoDB
+nodeJs api for storing product sells record with mongoDB
 
 I have deployed this app on heroku so you can check it out here, https://sellsrecord.herokuapp.com/
 
