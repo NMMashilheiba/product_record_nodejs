@@ -55,7 +55,7 @@ async function findTopFiveProduct(client) {
 
   return results;
 }
-async function todaysRevenue(client) {
+async function todaysRevenue(client, dateTime) {
   var res = 0;
   const pipeline = [
     {
@@ -86,4 +86,58 @@ async function todaysRevenue(client) {
   return res;
 }
 
-module.exports = { listAll, findTopFiveProduct, todaysRevenue, createRecord };
+// async function todaysSells(client, dateTime) {
+//   const pipeline = [
+//     {
+//       $group: {
+//         _id: "$dateTime",
+//         list: {
+//           $addToSet: "$name",
+//         },
+//       },
+//     },
+//   ];
+
+//   const cursor = await client
+//     .db("nodeapi")
+//     .collection("productSalesRecord")
+//     .aggregate(pipeline);
+
+//   const docs = await cursor.toArray();
+//   var results = docs;
+//   var result = [];
+
+//   console.log(typeof results, "Results");
+//   results.forEach((res) => {
+//     if (res._id === dateTime) {
+//       result.push(res);
+//       //   console.log(res.list);
+//     }
+//   });
+//   // console.log(res._id);
+//   // console.log(dateTime, "req");
+
+//   return result;
+// }
+
+async function todaysSells(client, dateTime) {
+  const cursor = await client
+    .db("nodeapi")
+    .collection("productSalesRecord")
+    .find({ dateTime: dateTime });
+
+  const docs = await cursor.toArray();
+  var results = docs;
+
+  console.log(results, "Results");
+
+  return results;
+}
+
+module.exports = {
+  listAll,
+  findTopFiveProduct,
+  todaysRevenue,
+  createRecord,
+  todaysSells,
+};

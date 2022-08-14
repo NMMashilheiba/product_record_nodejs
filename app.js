@@ -6,6 +6,7 @@ const {
   listAll,
   todaysRevenue,
   createRecord,
+  todaysSells,
 } = require("./controller");
 const { getReqData } = require("./utils");
 
@@ -29,7 +30,10 @@ var dateTime = date;
 const server = http.createServer(async (req, res) => {
   // route #0 Root
   if (req.url === "/" && req.method === "GET") {
-    res.writeHead(200, { "Content-Type": "application/json" });
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
     res.end(
       JSON.stringify({
         message: "Welcome to Mashil product sells record api with nodejs ",
@@ -40,7 +44,10 @@ const server = http.createServer(async (req, res) => {
   else if (req.url === "/product/topproducts" && req.method === "GET") {
     const todos = await findTopFiveProduct(client);
 
-    res.writeHead(200, { "Content-Type": "application/json" });
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
     res.end(JSON.stringify(todos));
   }
   // route #2 GET ALL RECORDS
@@ -53,25 +60,46 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify(todos));
   }
 
-  // route #3 CREATE RECORD POST
+  // route #3 CREATE RECORD
   else if (req.url === "/product/create/record" && req.method === "POST") {
     let userData = await getReqData(req);
     let data = JSON.parse(userData);
     // console.log(JSON.parse(userData));
-    const result = await createRecord(client, data);
-    res.writeHead(201, { "Content-Type": "application/json" });
+    const result = await createRecord(client, { data, dateTime });
+    res.writeHead(201, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
     res.end(JSON.stringify(result));
   }
   // route #4
   else if (req.url === "/product/todaysrevenue" && req.method === "GET") {
-    const todos = await todaysRevenue(client, { maxNoOfResults: 5 });
-    res.writeHead(200, { "Content-Type": "application/json" });
+    const todos = await todaysRevenue(client, dateTime);
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
+    // console.log("from app.js", JSON.stringify(todos));
+    res.end(JSON.stringify(todos));
+  }
+
+  // route #4
+  else if (req.url === "/product/todayssell" && req.method === "GET") {
+    const todos = await todaysSells(client, dateTime);
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
+    // console.log("from app.js", typeof todos);
     res.end(JSON.stringify(todos));
   }
 
   // No route present
   else {
-    res.writeHead(404, { "Content-Type": "application/json" });
+    res.writeHead(404, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    });
     res.end(JSON.stringify({ message: "404 route not found :( " }));
   }
 });
