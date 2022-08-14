@@ -64,8 +64,9 @@ const server = http.createServer(async (req, res) => {
   else if (req.url === "/product/create/record" && req.method === "POST") {
     let userData = await getReqData(req);
     let data = JSON.parse(userData);
-    // console.log(JSON.parse(userData));
-    const result = await createRecord(client, { data, dateTime });
+    data.dateTime = dateTime;
+    console.log(data);
+    const result = await createRecord(client, data);
     res.writeHead(201, {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
