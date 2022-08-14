@@ -65,7 +65,7 @@ const server = http.createServer(async (req, res) => {
     let userData = await getReqData(req);
     let data = JSON.parse(userData);
     data.dateTime = dateTime;
-    console.log(data);
+    // console.log(data);
     const result = await createRecord(client, data);
     res.writeHead(201, {
       "Content-Type": "application/json",
